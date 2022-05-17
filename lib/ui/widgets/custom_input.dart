@@ -6,9 +6,11 @@ class CustomInput extends StatelessWidget {
     Key? key,
     required this.name,
     this.visible = false,
+    required this.controller,
   }) : super(key: key);
 
   final String name;
+  final TextEditingController controller;
   final bool visible;
 
   @override
@@ -29,6 +31,7 @@ class CustomInput extends StatelessWidget {
             height: 6,
           ),
           TextFormField(
+            controller: controller,
             obscureText: visible,
             cursorColor: kBlackColor,
             decoration: InputDecoration(

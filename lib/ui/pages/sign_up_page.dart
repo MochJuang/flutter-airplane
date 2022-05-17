@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_airplane/cubit/auth_cubit.dart';
 import 'package:flutter_airplane/shared/theme.dart';
 import 'package:flutter_airplane/ui/widgets/custom_input.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignUpPage extends StatelessWidget {
-  const SignUpPage({Key? key}) : super(key: key);
+  SignUpPage({Key? key}) : super(key: key);
+
+  final TextEditingController nameController = TextEditingController(text: '');
+  final TextEditingController emailController = TextEditingController(text: '');
+  final TextEditingController passwordController = TextEditingController(text: '');
+  final TextEditingController hobbyController = TextEditingController(text: '');
 
   @override
   Widget build(BuildContext context) {
@@ -21,26 +28,54 @@ class SignUpPage extends StatelessWidget {
     Widget inputSection() {
       Widget submitButton() {
         // ignore: sized_box_for_whitespace
-        return Container(
-          width: double.infinity,
-          height: 55,
-          child: TextButton(
-            onPressed: () {
-              Navigator.pushNamed(context, "/bonus");
-            },
-            style: TextButton.styleFrom(
-                backgroundColor: kPrimaryColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(defaultRadius),
-                )),
-            child: Text(
-              "Get Started",
-              style: whiteTextStyle.copyWith(
-                fontWeight: medium,
-                fontSize: 18,
+        return BlocConsumer<AuthCubit, AuthState>(
+          listener: (context, state) {
+            if (state is AuthFail) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: kRedColor,
+                  content: Text(state.error),
+                ),
+              );
+            } else if (state is AuthSuccess) {
+              Navigator.pushNamedAndRemoveUntil(
+                  context, "/bonus", (route) => false);
+            }
+          },
+          builder: (context, state) {
+            if (state is AuthLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            return Container(
+              width: double.infinity,
+              height: 55,
+              child: TextButton(
+                onPressed: () {
+                  context.read<AuthCubit>().signUp(
+                        email: emailController.text,
+                        password: passwordController.text,
+                        name: nameController.text,
+                        hobby: hobbyController.text,
+                      );
+                  Navigator.pushNamed(context, "/bonus");
+                },
+                style: TextButton.styleFrom(
+                    backgroundColor: kPrimaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(defaultRadius),
+                    )),
+                child: Text(
+                  "Get Started",
+                  style: whiteTextStyle.copyWith(
+                    fontWeight: medium,
+                    fontSize: 18,
+                  ),
+                ),
               ),
-            ),
-          ),
+            );
+          },
         );
       }
 
@@ -55,10 +90,23 @@ class SignUpPage extends StatelessWidget {
         ),
         child: Column(
           children: [
-            const CustomInput(name: "Full Name"),
-            const CustomInput(name: "Email Address"),
-            const CustomInput(name: "Password", visible: true),
-            const CustomInput(name: "Hobby"),
+            CustomInput(
+              name: "Full Name",
+              controller: nameController,
+            ),
+            CustomInput(
+              name: "Email Address",
+              controller: emailController,
+            ),
+            CustomInput(
+              name: "Password",
+              visible: true,
+              controller: passwordController,
+            ),
+            CustomInput(
+              name: "Hobby",
+              controller: hobbyController,
+            ),
             submitButton(),
           ],
         ),

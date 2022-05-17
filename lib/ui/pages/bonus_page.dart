@@ -124,7 +124,7 @@ class BonusPage extends StatelessWidget {
         height: 50,
         child: TextButton(
           onPressed: () {
-            Navigator.pushNamed(context, "/main");
+            Navigator.pushNamedAndRemoveUntil(context, "/main", (route) => false);
           },
           style: TextButton.styleFrom(
               backgroundColor: kPrimaryColor,
