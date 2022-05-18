@@ -1,101 +1,100 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_airplane/cubit/auth_cubit.dart';
+import 'package:flutter_airplane/cubit/destination_cubit.dart';
+import 'package:flutter_airplane/models/destination_model.dart';
 import 'package:flutter_airplane/shared/theme.dart';
 import 'package:flutter_airplane/ui/widgets/destination_card.dart';
 import 'package:flutter_airplane/ui/widgets/destination_tile.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    context.read<DestinationCubit>().fetchDestinations();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     Widget header() {
-      return Container(
-        margin: const EdgeInsets.only(
-            left: defaultMargin, right: defaultMargin, top: 30),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      return BlocBuilder<AuthCubit, AuthState>(
+        builder: (context, state) {
+          if (state is AuthFail) {
+            return const SizedBox();
+          } else if (state is AuthSuccess) {
+            return Container(
+              margin: const EdgeInsets.only(
+                left: defaultMargin,
+                right: defaultMargin,
+                top: 30,
+              ),
+              child: Row(
                 children: [
-                  Text(
-                    "Howdy,\nKezia Anne",
-                    overflow: TextOverflow.ellipsis,
-                    style: blackTextStyle.copyWith(
-                      fontSize: 24,
-                      fontWeight: semibold,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Howdy,\n" + state.user.name,
+                          overflow: TextOverflow.ellipsis,
+                          style: blackTextStyle.copyWith(
+                            fontSize: 24,
+                            fontWeight: semibold,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          "Where to fly today",
+                          style: grayTextStyle.copyWith(
+                            fontSize: 16,
+                            fontWeight: light,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    "Where to fly today",
-                    style: grayTextStyle.copyWith(
-                      fontSize: 16,
-                      fontWeight: light,
+                  Container(
+                    height: 60,
+                    width: 60,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: AssetImage("assets/image_profile.png"),
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
-            Container(
-              height: 60,
-              width: 60,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: AssetImage("assets/image_profile.png"),
-                ),
-              ),
-            ),
-          ],
-        ),
+            );
+          } else {
+            return const SizedBox();
+          }
+        },
       );
     }
 
-    Widget popularDestinations() {
+    Widget popularDestinations(List<DestinationModel> destinations) {
       return Container(
         margin: const EdgeInsets.only(top: 30, left: defaultMargin),
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: const [
-              DestinationCard(
-                title: "Lake Ciliwung",
-                city: "Tangerang",
-                imageUrl: "image_destination1.png",
-                rating: 4.8,
-              ),
-              DestinationCard(
-                title: "White Houses",
-                city: "Spain",
-                imageUrl: "image_destination2.png",
-                rating: 4.7,
-              ),
-              DestinationCard(
-                title: "Hill Heyo",
-                city: "Monaco",
-                imageUrl: "image_destination3.png",
-                rating: 4.8,
-              ),
-              DestinationCard(
-                title: "Manarra",
-                city: "Japan",
-                imageUrl: "image_destination4.png",
-                rating: 4.8,
-              ),
-              DestinationCard(
-                title: "Payung Teduh",
-                city: "Singapure",
-                imageUrl: "image_destination5.png",
-                rating: 4.8,
-              ),
-            ],
+            children: destinations
+                .map((e) => DestinationCard(destination: e))
+                .toList(),
           ),
         ),
       );
     }
 
-    Widget newDestinations() {
+    Widget newDestinations(List<DestinationModel> destinations) {
       return Container(
           margin: const EdgeInsets.only(
             top: 30,
@@ -113,46 +112,40 @@ class HomePage extends StatelessWidget {
                   fontWeight: semibold,
                 ),
               ),
-              const DestinationTile(
-                title: "Danau Beratan",
-                city: "Singapure",
-                imageUrl: "image_destination6.png",
-                rating: 4.8,
-              ),
-              const DestinationTile(
-                title: "Sidney Opera",
-                city: "Australia",
-                imageUrl: "image_destination7.png",
-                rating: 4.8,
-              ),
-              const DestinationTile(
-                title: "Roma",
-                city: "Italy",
-                imageUrl: "image_destination8.png",
-                rating: 4.8,
-              ),
-              const DestinationTile(
-                title: "Payung Teduh",
-                city: "Singapure",
-                imageUrl: "image_destination9.png",
-                rating: 4.8,
-              ),
-              const DestinationTile(
-                title: "Hill Hey",
-                city: "Maroco",
-                imageUrl: "image_destination10.png",
-                rating: 4.8,
+              Column(
+                children: destinations
+                    .map((e) => DestinationTile(destination: e))
+                    .toList(),
               ),
             ],
           ));
     }
 
-    return ListView(
-      children: [
-        header(),
-        popularDestinations(),
-        newDestinations(),
-      ],
+    return BlocConsumer<DestinationCubit, DestinationState>(
+      listener: (context, state) {
+        if (state is DestinationFail) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: kRedColor,
+              content: Text(state.error),
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        if (state is DestinationSuccess) {
+          return ListView(
+            children: [
+              header(),
+              popularDestinations(state.destinations),
+              newDestinations(state.destinations),
+            ],
+          );
+        }
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
     );
   }
 }

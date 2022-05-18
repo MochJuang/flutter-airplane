@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_airplane/cubit/auth_cubit.dart';
 import 'package:flutter_airplane/shared/theme.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BonusPage extends StatelessWidget {
   const BonusPage({Key? key}) : super(key: key);
@@ -7,85 +9,101 @@ class BonusPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget bonusCard() {
-      return Container(
-        width: 300,
-        height: 211,
-        padding: const EdgeInsets.all(defaultMargin),
-        decoration: BoxDecoration(
-          image: const DecorationImage(
-            image: AssetImage("assets/image_card.png"),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: kPrimaryColor.withOpacity(0.5),
-              blurRadius: 50,
-              offset: const Offset(0, 10),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+      return BlocBuilder<AuthCubit, AuthState>(
+        builder: (context, state) {
+          if (state is AuthSuccess) {
+            return Container(
+              width: 300,
+              height: 211,
+              padding: const EdgeInsets.all(defaultMargin),
+              decoration: BoxDecoration(
+                image: const DecorationImage(
+                  image: AssetImage("assets/image_card.png"),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: kPrimaryColor.withOpacity(0.5),
+                    blurRadius: 50,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
-                      Text(
-                        "Name",
-                        style: whiteTextStyle.copyWith(
-                          fontSize: 14,
-                          fontWeight: light,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Name",
+                              style: whiteTextStyle.copyWith(
+                                fontSize: 14,
+                                fontWeight: light,
+                              ),
+                            ),
+                            Text(
+                              state.user.name,
+                              style: whiteTextStyle.copyWith(
+                                fontSize: 20,
+                                fontWeight: medium,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: 24,
+                        height: 24,
+                        margin: const EdgeInsets.only(right: 6),
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage("assets/icon_logo.png"),
+                          ),
                         ),
                       ),
                       Text(
-                        "Kazie Anne",
+                        "Pay",
                         style: whiteTextStyle.copyWith(
-                          fontSize: 20,
                           fontWeight: medium,
-                          overflow: TextOverflow.ellipsis,
+                          fontSize: 16,
                         ),
-                      ),
+                      )
                     ],
                   ),
-                ),
-                Container(
-                  width: 24,
-                  height: 24,
-                  margin: const EdgeInsets.only(right: 6),
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/icon_logo.png"),
+                  const SizedBox(height: 41),
+                  Text(
+                    "Balance",
+                    style: whiteTextStyle.copyWith(
+                      fontWeight: light,
+                      fontSize: 14,
                     ),
                   ),
-                ),
-                Text(
-                  "Pay",
-                  style: whiteTextStyle.copyWith(
-                    fontWeight: medium,
-                    fontSize: 16,
+                  Text(
+                    "IDR. 28.0000.000",
+                    style: whiteTextStyle.copyWith(
+                      fontWeight: medium,
+                      fontSize: 26,
+                    ),
                   ),
-                )
-              ],
-            ),
-            const SizedBox(height: 41),
-            Text(
-              "Balance",
-              style: whiteTextStyle.copyWith(
-                fontWeight: light,
-                fontSize: 14,
+                ],
               ),
-            ),
-            Text(
-              "IDR. 28.0000.000",
-              style: whiteTextStyle.copyWith(
-                fontWeight: medium,
-                fontSize: 26,
+            );
+          } else {
+            return Center(
+              child: Text(
+                "Ops, Something happens please contact developer",
+                style: whiteTextStyle.copyWith(
+                  fontWeight: medium,
+                  fontSize: 26,
+                ),
               ),
-            ),
-          ],
-        ),
+            );
+          }
+        },
       );
     }
 
@@ -124,7 +142,8 @@ class BonusPage extends StatelessWidget {
         height: 50,
         child: TextButton(
           onPressed: () {
-            Navigator.pushNamedAndRemoveUntil(context, "/main", (route) => false);
+            Navigator.pushNamedAndRemoveUntil(
+                context, "/main", (route) => false);
           },
           style: TextButton.styleFrom(
               backgroundColor: kPrimaryColor,

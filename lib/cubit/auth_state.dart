@@ -11,24 +11,20 @@ class AuthInitial extends AuthState {}
 
 class AuthLoading extends AuthState {}
 
-
 class AuthSuccess extends AuthState {
   final UserModel user;
 
   const AuthSuccess(this.user);
 
-   @override
-  // TODO: implement props
+  @override
   List<Object> get props => [user];
-
 }
 
-class AuthFail  extends AuthState {
+class AuthFail extends AuthState {
   final String error;
 
   const AuthFail(this.error);
 
   @override
-  // TODO: implement props
   List<Object> get props => [error];
 }

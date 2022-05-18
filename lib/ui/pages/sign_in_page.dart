@@ -4,14 +4,12 @@ import 'package:flutter_airplane/shared/theme.dart';
 import 'package:flutter_airplane/ui/widgets/custom_input.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SignUpPage extends StatelessWidget {
-  SignUpPage({Key? key}) : super(key: key);
+class SignInPage extends StatelessWidget {
+  SignInPage({Key? key}) : super(key: key);
 
-  final TextEditingController nameController = TextEditingController(text: '');
   final TextEditingController emailController = TextEditingController(text: '');
   final TextEditingController passwordController =
       TextEditingController(text: '');
-  final TextEditingController hobbyController = TextEditingController(text: '');
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +40,7 @@ class SignUpPage extends StatelessWidget {
               );
             } else if (state is AuthSuccess) {
               Navigator.pushNamedAndRemoveUntil(
-                  context, "/bonus", (route) => false);
+                  context, "/main", (route) => false);
             }
           },
           builder: (context, state) {
@@ -56,11 +54,9 @@ class SignUpPage extends StatelessWidget {
               height: 55,
               child: TextButton(
                 onPressed: () {
-                  context.read<AuthCubit>().signUp(
+                  context.read<AuthCubit>().signIn(
                         email: emailController.text,
                         password: passwordController.text,
-                        name: nameController.text,
-                        hobby: hobbyController.text,
                       );
                 },
                 style: TextButton.styleFrom(
@@ -70,7 +66,7 @@ class SignUpPage extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  "Get Started",
+                  "Sign In",
                   style: whiteTextStyle.copyWith(
                     fontWeight: medium,
                     fontSize: 18,
@@ -94,10 +90,6 @@ class SignUpPage extends StatelessWidget {
         child: Column(
           children: [
             CustomInput(
-              name: "Full Name",
-              controller: nameController,
-            ),
-            CustomInput(
               name: "Email Address",
               controller: emailController,
             ),
@@ -105,10 +97,6 @@ class SignUpPage extends StatelessWidget {
               name: "Password",
               visible: true,
               controller: passwordController,
-            ),
-            CustomInput(
-              name: "Hobby",
-              controller: hobbyController,
             ),
             submitButton(),
           ],
@@ -119,7 +107,7 @@ class SignUpPage extends StatelessWidget {
     Widget tacButton() {
       return GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, '/sign-in');
+          Navigator.pushNamed(context, '/sign-up');
         },
         child: Container(
           alignment: Alignment.center,
@@ -128,7 +116,7 @@ class SignUpPage extends StatelessWidget {
             bottom: 73,
           ),
           child: Text(
-            "Have an account? Sign in",
+            "Don't have an account ? Sign-Up",
             style: grayTextStyle.copyWith(
               fontSize: 16,
               fontWeight: light,

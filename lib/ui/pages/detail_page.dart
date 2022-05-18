@@ -1,13 +1,17 @@
 // ignore_for_file: sized_box_for_whitespace
 
 import 'package:flutter/material.dart';
+import 'package:flutter_airplane/models/destination_model.dart';
 import 'package:flutter_airplane/shared/theme.dart';
 import 'package:flutter_airplane/ui/widgets/custom_button.dart';
 import 'package:flutter_airplane/ui/widgets/interest_item.dart';
 import 'package:flutter_airplane/ui/widgets/photo_item.dart';
+import 'package:intl/intl.dart';
 
 class DetailPage extends StatelessWidget {
-  const DetailPage({Key? key}) : super(key: key);
+  const DetailPage({Key? key, required this.destination}) : super(key: key);
+
+  final DestinationModel destination;
 
   @override
   Widget build(BuildContext context) {
@@ -15,10 +19,10 @@ class DetailPage extends StatelessWidget {
       return Container(
         width: double.infinity,
         height: 450,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
             fit: BoxFit.cover,
-            image: AssetImage("assets/image_destination1.png"),
+            image: NetworkImage(destination.imageUrl),
           ),
         ),
       );
@@ -71,7 +75,7 @@ class DetailPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Lake Ciliwung",
+                          destination.name,
                           overflow: TextOverflow.ellipsis,
                           style: whiteTextStyle.copyWith(
                             fontSize: 24,
@@ -79,7 +83,7 @@ class DetailPage extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "Tangerang",
+                          destination.city,
                           style: whiteTextStyle.copyWith(
                             fontSize: 16,
                             fontWeight: light,
@@ -103,7 +107,7 @@ class DetailPage extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "4.8",
+                        destination.rating.toString(),
                         style: whiteTextStyle.copyWith(
                           fontWeight: medium,
                         ),
@@ -117,8 +121,7 @@ class DetailPage extends StatelessWidget {
             Container(
               width: double.infinity,
               margin: const EdgeInsets.only(top: 30),
-              padding:
-                  const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+              padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
               decoration: BoxDecoration(
                 color: kWhiteColor,
                 borderRadius: BorderRadius.circular(18),
@@ -222,7 +225,11 @@ class DetailPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "IDR. 2.500.000",
+                          NumberFormat.currency(
+                                  locale: "id",
+                                  decimalDigits: 0,
+                                  symbol: "IDR. ")
+                              .format(destination.price),
                           style: blackTextStyle.copyWith(
                             fontSize: 24,
                             fontWeight: medium,
@@ -240,8 +247,8 @@ class DetailPage extends StatelessWidget {
                   ),
                   CustomButton(
                     width: 170,
-                    text:  "Book Now",
-                    onPressed: (){
+                    text: "Book Now",
+                    onPressed: () {
                       Navigator.pushNamed(context, "/choose-page");
                     },
                   ),
