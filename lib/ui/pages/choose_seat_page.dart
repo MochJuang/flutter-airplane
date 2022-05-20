@@ -1,12 +1,19 @@
 // ignore_for_file: sized_box_for_whitespace
 
 import 'package:flutter/material.dart';
+import 'package:flutter_airplane/cubit/seat_cubit.dart';
+import 'package:flutter_airplane/models/destination_model.dart';
+import 'package:flutter_airplane/models/transaction_model.dart';
 import 'package:flutter_airplane/shared/theme.dart';
+import 'package:flutter_airplane/ui/pages/checkout_page.dart';
 import 'package:flutter_airplane/ui/widgets/custom_button.dart';
 import 'package:flutter_airplane/ui/widgets/seat_item.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 class ChooseSeatPage extends StatelessWidget {
-  const ChooseSeatPage({Key? key}) : super(key: key);
+  const ChooseSeatPage({Key? key, required this.destination}) : super(key: key);
+  final DestinationModel destination;
 
   @override
   Widget build(BuildContext context) {
@@ -155,8 +162,14 @@ class ChooseSeatPage extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  const SeatItem(status: 2),
-                  const SeatItem(status: 2),
+                  const SeatItem(
+                    isAvailable: true,
+                    id: "A1",
+                  ),
+                  const SeatItem(
+                    isAvailable: true,
+                    id: "B1",
+                  ),
                   Container(
                     width: 48,
                     height: 48,
@@ -167,8 +180,14 @@ class ChooseSeatPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SeatItem(status: 0),
-                  const SeatItem(status: 2),
+                  const SeatItem(
+                    isAvailable: true,
+                    id: "C1",
+                  ),
+                  const SeatItem(
+                    isAvailable: true,
+                    id: "D1",
+                  ),
                 ],
               ),
             ),
@@ -177,8 +196,14 @@ class ChooseSeatPage extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  const SeatItem(status: 0),
-                  const SeatItem(status: 0),
+                  const SeatItem(
+                    isAvailable: true,
+                    id: "A2",
+                  ),
+                  const SeatItem(
+                    isAvailable: true,
+                    id: "B2",
+                  ),
                   Container(
                     width: 48,
                     height: 48,
@@ -189,8 +214,14 @@ class ChooseSeatPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SeatItem(status: 0),
-                  const SeatItem(status: 2),
+                  const SeatItem(
+                    isAvailable: true,
+                    id: "C2",
+                  ),
+                  const SeatItem(
+                    isAvailable: true,
+                    id: "D2",
+                  ),
                 ],
               ),
             ),
@@ -199,8 +230,14 @@ class ChooseSeatPage extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  const SeatItem(status: 1),
-                  const SeatItem(status: 1),
+                  const SeatItem(
+                    isAvailable: true,
+                    id: "A3",
+                  ),
+                  const SeatItem(
+                    isAvailable: true,
+                    id: "B3",
+                  ),
                   Container(
                     width: 48,
                     height: 48,
@@ -211,8 +248,14 @@ class ChooseSeatPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SeatItem(status: 2),
-                  const SeatItem(status: 2),
+                  const SeatItem(
+                    isAvailable: false,
+                    id: "C3",
+                  ),
+                  const SeatItem(
+                    isAvailable: true,
+                    id: "D3",
+                  ),
                 ],
               ),
             ),
@@ -221,8 +264,14 @@ class ChooseSeatPage extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  const SeatItem(status: 0),
-                  const SeatItem(status: 2),
+                  const SeatItem(
+                    isAvailable: true,
+                    id: "A4",
+                  ),
+                  const SeatItem(
+                    isAvailable: true,
+                    id: "B4",
+                  ),
                   Container(
                     width: 48,
                     height: 48,
@@ -233,8 +282,14 @@ class ChooseSeatPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SeatItem(status: 0),
-                  const SeatItem(status: 0),
+                  const SeatItem(
+                    isAvailable: true,
+                    id: "C4",
+                  ),
+                  const SeatItem(
+                    isAvailable: true,
+                    id: "D4",
+                  ),
                 ],
               ),
             ),
@@ -243,8 +298,14 @@ class ChooseSeatPage extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  const SeatItem(status: 0),
-                  const SeatItem(status: 0),
+                  const SeatItem(
+                    isAvailable: true,
+                    id: "A5",
+                  ),
+                  const SeatItem(
+                    isAvailable: false,
+                    id: "B5",
+                  ),
                   Container(
                     width: 48,
                     height: 48,
@@ -255,8 +316,14 @@ class ChooseSeatPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SeatItem(status: 2),
-                  const SeatItem(status: 0),
+                  const SeatItem(
+                    isAvailable: false,
+                    id: "C5",
+                  ),
+                  const SeatItem(
+                    isAvailable: true,
+                    id: "D5",
+                  ),
                 ],
               ),
             ),
@@ -265,42 +332,54 @@ class ChooseSeatPage extends StatelessWidget {
               margin: const EdgeInsets.only(top: 30),
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "Your Seat",
-                          style: grayTextStyle.copyWith(fontWeight: light),
-                        ),
-                      ),
-                      Text(
-                        "A3, B3",
-                        style: blackTextStyle.copyWith(
-                          fontWeight: medium,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
+                  BlocBuilder<SeatCubit, List<String>>(
+                    builder: (context, state) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "Your Seat",
+                              style: grayTextStyle.copyWith(fontWeight: light),
+                            ),
+                          ),
+                          Text(
+                            state.join(", "),
+                            style: blackTextStyle.copyWith(
+                              fontWeight: medium,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                   const SizedBox(
                     height: 16,
                   ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "Total",
-                          style: grayTextStyle.copyWith(fontWeight: light),
-                        ),
-                      ),
-                      Text(
-                        "IDR 540.000.000",
-                        style: purpleTextStyle.copyWith(
-                          fontWeight: semibold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
+                  BlocBuilder<SeatCubit, List<String>>(
+                    builder: (context, state) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "Total",
+                              style: grayTextStyle.copyWith(fontWeight: light),
+                            ),
+                          ),
+                          Text(
+                            NumberFormat.currency(
+                              locale: "id",
+                              decimalDigits: 0,
+                              symbol: "IDR. ",
+                            ).format(state.length * destination.price),
+                            style: purpleTextStyle.copyWith(
+                              fontWeight: semibold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ],
               ),
@@ -318,14 +397,35 @@ class ChooseSeatPage extends StatelessWidget {
           title(),
           status(),
           selectSeat(),
-          Container(
-            margin: const EdgeInsets.only(top: 30, bottom: 46),
-            child: CustomButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/checkout');
-              },
-              text: "Continue to Checkout",
-            ),
+          BlocBuilder<SeatCubit, List<String>>(
+            builder: (context, state) {
+              return Container(
+                margin: const EdgeInsets.only(top: 30, bottom: 46),
+                child: CustomButton(
+                  onPressed: () {
+                    int price = destination.price * state.length;
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CheckoutPage(
+                          transaction: TransactionModel(
+                            destination: destination,
+                            amountOfTraveler: state.length,
+                            selectedSeat: state.join(", "),
+                            insurance: true,
+                            refundable: false,
+                            price: price,
+                            vat: 0.45,
+                            grandTotal: price + (price * 0.45).toInt(),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  text: "Continue to Checkout",
+                ),
+              );
+            },
           ),
         ],
       ),
